@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
+import EditModal from "./Modal/Edit";
+import DeleteModal from "./Modal/Delete";
 
 function App() {
   const [items, setItems] = useState<string[]>([]);
   const [input, setInput] = useState('');
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
   useEffect(() => {
     const storedItems = localStorage.getItem('items');
@@ -19,6 +24,14 @@ function App() {
       setInput('');
     }
   }
+
+  const handleEditItem = (index: number, newItem: string) => {
+    const newItems = [...items];
+    newItems[index] = newItem;
+    setItems(newItems);
+    localStorage.setItem('items', JSON.stringify(newItems));
+    setIsEditModalOpen(false);
+  };
 
   return (
     <>
@@ -51,8 +64,12 @@ function App() {
                 <div
                   className="cursor-pointer h-full flex items-center justify-center gap-1"
                 >
-                  <div className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
-                    <i className="fa-solid fa-pen text-sm text-yellow-400"></i>
+                  <div 
+                    onClick={() => { setSelectedItemId(index); setIsEditModalOpen(true); }}
+                    className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
+                      <i
+                        className="fa-solid fa-pen text-sm text-yellow-400"
+                      />
                   </div>
                   <div className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
                     <i className="fa-solid fa-trash text-sm text-red-400"></i>
@@ -62,6 +79,16 @@ function App() {
             ))}
           </div>
         </div>
+
+        <EditModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={handleEditItem}
+          item={items[selectedItemId as number]}
+          itemId={selectedItemId}
+        />
+
+        <DeleteModal />
       </div>
     </>
   )
