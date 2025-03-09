@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 function App() {
-  const [ items, setItems ] = useState<string[]>([]);
+  const [items, setItems] = useState<string[]>([]);
   const [input, setInput] = useState('');
 
+  useEffect(() => {
+    const storedItems = localStorage.getItem('items');
+    if (storedItems) {
+      setItems(JSON.parse(storedItems));
+    }
+  }, []);
+
   const handleAddItem = () => {
-    if(input.trim() !== ""){
-      setItems([...items, input]);
+    if (input.trim() !== "") {
+      const newItems = [...items, input];
+      setItems(newItems);
+      localStorage.setItem('items', JSON.stringify(newItems));
       setInput('');
     }
   }
