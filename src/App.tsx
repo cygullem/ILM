@@ -33,6 +33,13 @@ function App() {
     setIsEditModalOpen(false);
   };
 
+  const handleDeleteItem = (index: number) => {
+    const newItems = items.filter((_, i) => i !== index);
+    setItems(newItems);
+    localStorage.setItem('items', JSON.stringify(newItems));
+    setIsDeleteModalOpen(false);
+  };
+
   return (
     <>
       <div className="h-screen w-full flex flex-col items-center justify-center bg-[#212429] ">
@@ -64,14 +71,16 @@ function App() {
                 <div
                   className="cursor-pointer h-full flex items-center justify-center gap-1"
                 >
-                  <div 
+                  <div
                     onClick={() => { setSelectedItemId(index); setIsEditModalOpen(true); }}
                     className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
-                      <i
-                        className="fa-solid fa-pen text-sm text-yellow-400"
-                      />
+                    <i
+                      className="fa-solid fa-pen text-sm text-yellow-400"
+                    />
                   </div>
-                  <div className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
+                  <div
+                    onClick={() => { setSelectedItemId(index); setIsDeleteModalOpen(true); }}
+                    className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
                     <i className="fa-solid fa-trash text-sm text-red-400"></i>
                   </div>
                 </div>
@@ -88,7 +97,12 @@ function App() {
           itemId={selectedItemId}
         />
 
-        <DeleteModal />
+        <DeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onDelete={() => handleDeleteItem(selectedItemId as number)}
+          item={items[selectedItemId as number]}
+        />
       </div>
     </>
   )
