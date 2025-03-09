@@ -42,28 +42,28 @@ function App() {
 
   return (
     <>
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-[#212429] ">
-        <div className="flex flex-col items-center justify-center p-2 rounded-lg">
-          <h1 className="text-lg text-white text-start w-full">Item List</h1>
+      <div className="h-screen w-full flex flex-col items-center justify-center bg-[#212429] scrollbar-none">
+        <div className="flex flex-col items-center justify-center p-2 rounded-lg w-full sm:w-3/4 md:w-1/2 lg:w-1/3">
+          <h1 className="text-lg text-white text-start w-full">Things to be done:</h1>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 w-full">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Enter Item"
-              className="bg-[#33353C] text-white p-2 rounded-md mt-2 w-[300px]"
+              className="bg-[#33353C] text-white p-2 rounded-md mt-2 w-full sm:w-[300px]"
             />
 
             <button
               onClick={handleAddItem}
-              className="bg-[#4B5563] text-white p-2 rounded-md mt-2 cursor-pointer active:scale-[.957]"
+              className="bg-[#4B5563] flex-1 text-white p-2 rounded-md mt-2 cursor-pointer active:scale-[.957]"
             >
               Add Item
             </button>
           </div>
 
-          <div className="bg-[#33353C] flex flex-col gap-2 mt-4 w-full h-[300px] max-h-[300px] overflow-y-auto rounded-lg p-2">
+          <div className="bg-[#33353C] flex flex-col gap-2 mt-4 w-full h-[350px] max-h-[350px] overflow-y-auto rounded-lg p-2 scrollbar-none">
             {items.map((item, index) => (
               <div key={index} className="bg-[#4B5563] flex items-center justify-between p-2 rounded-md text-white">
                 {item}
