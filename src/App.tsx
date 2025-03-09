@@ -45,8 +45,19 @@ function App() {
 
           <div className="bg-[#33353C] flex flex-col gap-2 mt-4 w-full h-[300px] max-h-[300px] overflow-y-auto rounded-lg p-2">
             {items.map((item, index) => (
-              <div key={index} className="bg-[#4B5563] p-2 rounded-md text-white">
+              <div key={index} className="bg-[#4B5563] flex items-center justify-between p-2 rounded-md text-white">
                 {item}
+
+                <div
+                  className="cursor-pointer h-full flex items-center justify-center gap-1"
+                >
+                  <div className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
+                    <i className="fa-solid fa-pen text-sm text-yellow-400"></i>
+                  </div>
+                  <div className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
+                    <i className="fa-solid fa-trash text-sm text-red-400"></i>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
