@@ -80,7 +80,7 @@ function App() {
           <div className="bg-[#33353C] flex flex-col gap-2 mt-4 w-full h-[350px] max-h-[350px] overflow-y-auto rounded-lg p-2 scrollbar-none">
             {items
               .map((item, index) => ({ item, index }))
-              .sort((a, b) => doneItems.includes(a.index) - doneItems.includes(b.index))
+              .sort((a, b) => Number(doneItems.includes(a.index)) - Number(doneItems.includes(b.index)))
               .map(({ item, index }) => (
                 <div key={index} className={`flex items-center justify-between p-2 rounded-md text-white ${doneItems.includes(index) ? 'bg-green-700' : 'bg-[#4B5563]'}`}>
                   {item}
