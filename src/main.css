@@ -8,3 +8,22 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* Media query for smaller screens */
+@media (max-width: 640px) {
+    .flex-col-sm {
+        flex-direction: column;
+        max-width: 300px;
+    }
+    .home-bg {
+        height: 100%;
+        width: 100%;
+        padding: 2rem;
+    }
+    .action {
+        max-width: 300px;
+    }
+    .home-text {
+        max-width: 300px;
+    }
+}

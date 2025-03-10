@@ -56,11 +56,11 @@ function App() {
 
 	return (
 		<>
-			<div className="h-screen w-full flex flex-col items-center justify-center bg-[#212429] scrollbar-none">
-				<div className="flex flex-col items-center justify-center p-2 rounded-lg w-full sm:w-3/4 md:w-1/2 lg:w-1/3">
-					<h1 className="text-lg text-white text-start w-[700px]">Things to be done:</h1>
+			<div className="home-bg h-screen w-full flex flex-col items-center justify-center bg-[#212429] scrollbar-none">
+				<div className="flex flex-col items-center justify-center p-2 rounded-lg w-full sm:w-[400px] md:w-[500px] lg:w-1/3">
+					<h1 className="home-text text-lg text-white text-start w-[700px]">Things to be done:</h1>
 
-					<div className="flex flex-col sm:flex-row gap-2 w-[700px]">
+					<div className="action flex flex-col sm:flex-row gap-2 w-[700px]">
 						<input
 							type="text"
 							value={input}
@@ -77,7 +77,7 @@ function App() {
 						</button>
 					</div>
 
-					<div className="flex items-start justify-center gap-2 w-[700px]">
+					<div className="flex flex-col-sm sm:flex-row items-start justify-center gap-2 w-[700px]">
 						<div className="bg-[#33353C] flex flex-col gap-2 mt-4 w-full h-[350px] max-h-[350px] overflow-y-auto rounded-lg p-2 scrollbar-none">
 							<p className="text-white text-sm">TO DO</p>
 							{items
