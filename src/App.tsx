@@ -108,11 +108,11 @@ function App() {
 						</div>
 
 						<div className="bg-[#33353C] flex flex-col gap-2 mt-4 w-full h-[350px] max-h-[350px] overflow-y-auto rounded-lg p-2 scrollbar-none">
-							<div 
+							<div
 								className="flex items-center justify-between text-white text-sm"
 							>
 								ALREADY DONE
-								<i 
+								<i
 									onClick={() => { setDoneItems([]); localStorage.removeItem('doneItems'); }}
 
 									className="fa-solid fa-trash text-sm text-red-400 cursor-pointer active:scale-[.957]"
