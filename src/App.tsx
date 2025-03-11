@@ -5,12 +5,12 @@ import MarkAsDone from "./Modal/MarkAsDone";
 
 function App() {
 	const [items, setItems] = useState<{ id: number, value: string }[]>([]);
+	const [doneItems, setDoneItems] = useState<number[]>([]);
 	const [input, setInput] = useState('');
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [markAsDone, setMarkAsDone] = useState(false);
 	const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
-	const [doneItems, setDoneItems] = useState<number[]>([]);
 
 	useEffect(() => {
 		const storedItems = localStorage.getItem('items');
@@ -62,10 +62,17 @@ function App() {
 	};
 
 	const handleDeleteDoneItem = (id: number) => {
-		const updatedDoneItems = doneItems.filter(doneId => doneId !== id);
-		setDoneItems(updatedDoneItems);
-		localStorage.setItem('doneItems', JSON.stringify(updatedDoneItems));
+		// Remove from doneItems
+		const newDoneItems = doneItems.filter(doneItem => doneItem !== id);
+		setDoneItems(newDoneItems);
+		localStorage.setItem('doneItems', JSON.stringify(newDoneItems));
+
+		// Also remove from items
+		const updatedItems = items.filter(item => item.id !== id);
+		setItems(updatedItems);
+		localStorage.setItem('items', JSON.stringify(updatedItems));
 	};
+
 
 	return (
 		<>
