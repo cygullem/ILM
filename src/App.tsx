@@ -4,13 +4,13 @@ import DeleteModal from "./Modal/Delete";
 import MarkAsDone from "./Modal/MarkAsDone";
 
 function App() {
-	const [items, setItems] = useState<string[]>([]);
+	const [items, setItems] = useState<{ id: number, value: string }[]>([]);
 	const [input, setInput] = useState('');
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [markAsDone, setMarkAsDone] = useState(false);
 	const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
-	const [doneItems, setDoneItems] = useState<string[]>([]);
+	const [doneItems, setDoneItems] = useState<number[]>([]);
 
 	useEffect(() => {
 		const storedItems = localStorage.getItem('items');
@@ -25,44 +25,46 @@ function App() {
 
 	const handleAddItem = () => {
 		if (input.trim() !== "") {
-			const newItems = [...items, input];
+			const newItem = { id: Date.now(), value: input };
+			const newItems = [...items, newItem];
 			setItems(newItems);
 			localStorage.setItem('items', JSON.stringify(newItems));
 			setInput('');
 		}
-	}
+	};
 
-	const handleEditItem = (index: number, newItem: string) => {
-		const newItems = [...items];
-		newItems[index] = newItem;
-		setItems(newItems);
-		localStorage.setItem('items', JSON.stringify(newItems));
+	const handleEditItem = (id: number, newValue: string) => {
+		const updatedItems = items.map(item =>
+			item.id === id ? { ...item, value: newValue } : item
+		);
+		setItems(updatedItems);
+		localStorage.setItem('items', JSON.stringify(updatedItems));
 		setIsEditModalOpen(false);
 	};
 
-	const handleDeleteItem = (index: number) => {
-		const newItems = items.filter((_, i) => i !== index);
-		setItems(newItems);
-		localStorage.setItem('items', JSON.stringify(newItems));
+	const handleDeleteItem = (id: number) => {
+		const updatedItems = items.filter(item => item.id !== id);
+		setItems(updatedItems);
+		localStorage.setItem('items', JSON.stringify(updatedItems));
 
-		const newDoneItems = doneItems.filter(item => item !== items[index]);
-		setDoneItems(newDoneItems);
-		localStorage.setItem('doneItems', JSON.stringify(newDoneItems));
+		const updatedDoneItems = doneItems.filter(doneId => doneId !== id);
+		setDoneItems(updatedDoneItems);
+		localStorage.setItem('doneItems', JSON.stringify(updatedDoneItems));
 
 		setIsDeleteModalOpen(false);
 	};
 
-	const handleDeleteDoneItem = (item: string) => {
-		const newDoneItems = doneItems.filter(doneItem => doneItem !== item);
-		setDoneItems(newDoneItems);
-		localStorage.setItem('doneItems', JSON.stringify(newDoneItems));
+	const handleMarkAsDone = (id: number) => {
+		const updatedDoneItems = [...doneItems, id];
+		setDoneItems(updatedDoneItems);
+		localStorage.setItem('doneItems', JSON.stringify(updatedDoneItems));
+		setMarkAsDone(false);
 	};
 
-	const handleMarkAsDone = (index: number) => {
-		const newDoneItems = [...doneItems, items[index]];
-		setDoneItems(newDoneItems);
-		localStorage.setItem('doneItems', JSON.stringify(newDoneItems));
-		setMarkAsDone(false);
+	const handleDeleteDoneItem = (id: number) => {
+		const updatedDoneItems = doneItems.filter(doneId => doneId !== id);
+		setDoneItems(updatedDoneItems);
+		localStorage.setItem('doneItems', JSON.stringify(updatedDoneItems));
 	};
 
 	return (
@@ -89,27 +91,27 @@ function App() {
 					</div>
 
 					<div className="flex flex-col-sm sm:flex-row items-start justify-center gap-2 w-[700px]">
+						{/* To Do List */}
 						<div className="bg-[#33353C] flex flex-col gap-2 mt-4 w-full h-[350px] max-h-[350px] overflow-y-auto rounded-lg p-2 scrollbar-none">
 							<p className="text-white text-sm">TO DO</p>
 							{items
-								.map((item, index) => ({ item, index }))
-								.filter(({ item }) => !doneItems.includes(item))
-								.map(({ item, index }) => (
-									<div key={index} className="flex items-center justify-between p-2 rounded-md text-white bg-[#4B5563]">
-										{item}
+								.filter(item => !doneItems.includes(item.id))
+								.map(item => (
+									<div key={item.id} className="flex items-center justify-between p-2 rounded-md text-white bg-[#4B5563]">
+										{item.value}
 										<div className="cursor-pointer h-full flex items-center justify-center gap-1">
 											<div
-												onClick={() => { setSelectedItemId(index); setMarkAsDone(true); }}
+												onClick={() => { setSelectedItemId(item.id); setMarkAsDone(true); }}
 												className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
 												<i className="fa-solid fa-check text-sm text-green-400"></i>
 											</div>
 											<div
-												onClick={() => { setSelectedItemId(index); setIsEditModalOpen(true); }}
+												onClick={() => { setSelectedItemId(item.id); setIsEditModalOpen(true); }}
 												className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
 												<i className="fa-solid fa-pen text-sm text-yellow-400" />
 											</div>
 											<div
-												onClick={() => { setSelectedItemId(index); setIsDeleteModalOpen(true); }}
+												onClick={() => { setSelectedItemId(item.id); setIsDeleteModalOpen(true); }}
 												className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957]">
 												<i className="fa-solid fa-trash text-sm text-red-400"></i>
 											</div>
@@ -118,32 +120,34 @@ function App() {
 								))}
 						</div>
 
+						{/* Done List */}
 						<div className="bg-[#33353C] flex flex-col gap-2 mt-4 w-full h-[350px] max-h-[350px] overflow-y-auto rounded-lg p-2 scrollbar-none">
-							<div className="flex items-center justify-between text-white text-sm">
-								ALREADY DONE
-							</div>
+							<p className="text-white text-sm">ALREADY DONE</p>
 							{doneItems
-								.map((item, index) => (
-									<div key={index} className="flex items-center justify-between p-2 rounded-md text-white bg-green-700">
-										{item}
-										<div
-											onClick={() => handleDeleteDoneItem(item)}
-											className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957] cursor-pointer"
-										>
-											<i className="fa-solid fa-trash text-sm text-red-400"></i>
+								.map(id => {
+									const item = items.find(item => item.id === id);
+									return item && (
+										<div key={id} className="flex items-center justify-between p-2 rounded-md text-white bg-green-700">
+											{item.value}
+											<div
+												onClick={() => handleDeleteDoneItem(id)}
+												className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957] cursor-pointer"
+											>
+												<i className="fa-solid fa-trash text-sm text-red-400"></i>
+											</div>
 										</div>
-									</div>
-								))
-							}
+									);
+								})}
 						</div>
 					</div>
 				</div>
 
+				{/* Modals */}
 				<EditModal
 					isOpen={isEditModalOpen}
 					onClose={() => setIsEditModalOpen(false)}
 					onSave={handleEditItem}
-					item={items[selectedItemId as number]}
+					item={items.find(item => item.id === selectedItemId)?.value || ""}
 					itemId={selectedItemId}
 				/>
 
@@ -151,18 +155,18 @@ function App() {
 					isOpen={isDeleteModalOpen}
 					onClose={() => setIsDeleteModalOpen(false)}
 					onDelete={() => handleDeleteItem(selectedItemId as number)}
-					item={items[selectedItemId as number]}
+					item={items.find(item => item.id === selectedItemId)?.value || ""}
 				/>
 
 				<MarkAsDone
 					isOpen={markAsDone}
 					onClose={() => setMarkAsDone(false)}
 					onMarkAsDone={() => handleMarkAsDone(selectedItemId as number)}
-					item={items[selectedItemId as number]}
+					item={items.find(item => item.id === selectedItemId)?.value || ""}
 				/>
 			</div>
 		</>
-	)
+	);
 }
 
 export default App;
