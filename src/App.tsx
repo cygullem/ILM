@@ -10,7 +10,7 @@ function App() {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [markAsDone, setMarkAsDone] = useState(false);
 	const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
-	const [doneItems, setDoneItems] = useState<number[]>([]);
+	const [doneItems, setDoneItems] = useState<string[]>([]);
 
 	useEffect(() => {
 		const storedItems = localStorage.getItem('items');
@@ -44,11 +44,22 @@ function App() {
 		const newItems = items.filter((_, i) => i !== index);
 		setItems(newItems);
 		localStorage.setItem('items', JSON.stringify(newItems));
+
+		const newDoneItems = doneItems.filter(item => item !== items[index]);
+		setDoneItems(newDoneItems);
+		localStorage.setItem('doneItems', JSON.stringify(newDoneItems));
+
 		setIsDeleteModalOpen(false);
 	};
 
+	const handleDeleteDoneItem = (item: string) => {
+		const newDoneItems = doneItems.filter(doneItem => doneItem !== item);
+		setDoneItems(newDoneItems);
+		localStorage.setItem('doneItems', JSON.stringify(newDoneItems));
+	};
+
 	const handleMarkAsDone = (index: number) => {
-		const newDoneItems = [...doneItems, index];
+		const newDoneItems = [...doneItems, items[index]];
 		setDoneItems(newDoneItems);
 		localStorage.setItem('doneItems', JSON.stringify(newDoneItems));
 		setMarkAsDone(false);
@@ -82,7 +93,7 @@ function App() {
 							<p className="text-white text-sm">TO DO</p>
 							{items
 								.map((item, index) => ({ item, index }))
-								.filter(({ index }) => !doneItems.includes(index))
+								.filter(({ item }) => !doneItems.includes(item))
 								.map(({ item, index }) => (
 									<div key={index} className="flex items-center justify-between p-2 rounded-md text-white bg-[#4B5563]">
 										{item}
@@ -108,25 +119,22 @@ function App() {
 						</div>
 
 						<div className="bg-[#33353C] flex flex-col gap-2 mt-4 w-full h-[350px] max-h-[350px] overflow-y-auto rounded-lg p-2 scrollbar-none">
-							<div
-								className="flex items-center justify-between text-white text-sm"
-							>
+							<div className="flex items-center justify-between text-white text-sm">
 								ALREADY DONE
-								<i
-									onClick={() => { setDoneItems([]); localStorage.removeItem('doneItems'); }}
-
-									className="fa-solid fa-trash text-sm text-red-400 cursor-pointer active:scale-[.957]"
-								>
-								</i>
 							</div>
-							{items
-								.map((item, index) => ({ item, index }))
-								.filter(({ index }) => doneItems.includes(index))
-								.map(({ item, index }) => (
+							{doneItems
+								.map((item, index) => (
 									<div key={index} className="flex items-center justify-between p-2 rounded-md text-white bg-green-700">
 										{item}
+										<div
+											onClick={() => handleDeleteDoneItem(item)}
+											className="flex items-center justify-center bg-[#33353C] p-2 rounded-md active:scale-[.957] cursor-pointer"
+										>
+											<i className="fa-solid fa-trash text-sm text-red-400"></i>
+										</div>
 									</div>
-								))}
+								))
+							}
 						</div>
 					</div>
 				</div>
